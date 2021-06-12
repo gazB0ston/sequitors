@@ -1,5 +1,5 @@
 # sequitors
-gaz's miscellaneous code playpen
+gaz's miscellaneous code playpen -- _not_ **non**-sequitors
 
 This repository is for things that strike my fancy.
 
