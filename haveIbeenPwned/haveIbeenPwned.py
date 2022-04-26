@@ -19,18 +19,21 @@
 
 import os
 import sys
+import argparse
 import hashlib
 from getpass import getpass
 import requests
 import re
 
-def doQuery(hashofQueryPwd):
+def doQuery(hashofQueryPwd, verbose=False):
     # init return empty list
     replyLines = list()
 
     # capture first 5 characters of hexdigest for request URI
     hash5 = hashofQueryPwd[:5]
     queryURI = f'https://api.pwnedpasswords.com/range/{hash5}'
+    if verbose:
+        print(f"URI: {queryURI}")
 
     with requests.Session() as s:
         s.headers.update({'Add-Padding': 'true'})
@@ -45,7 +48,7 @@ def doQuery(hashofQueryPwd):
 
     return replyLines
 
-def checkQuery(hashofQueryPwd, replyLines):
+def checkQuery(hashofQueryPwd, replyLines, verbose=False):
     # last 35 characters of hexdigest
     hash35 = hashofQueryPwd[5:]
     # assume no compromises, adjust as necessary
@@ -57,6 +60,8 @@ def checkQuery(hashofQueryPwd, replyLines):
         result = pattern.match(line)
         # capture the number of compromises known
         if result is not None:
+            if verbose:
+                print(f"match: {result}")
             nCompromises += int(line.split(":")[1])
 
     return nCompromises
@@ -64,21 +69,32 @@ def checkQuery(hashofQueryPwd, replyLines):
 def main():
     # init things
     rc = 0
-    verbose = 0
+
+    parser = argparse.ArgumentParser(
+            description="read a password from STDIN with no echo and check if it has known compromises")
+    parser.add_argument(
+            '--verbose',
+            action='store_true',
+            default=False,
+            help="show more information")
+    args = parser.parse_args()
 
     # read password from stdin, do not echo or store it
     queryPwd = getpass(prompt="Enter password to be checked: ")
     # get SHA1 hexdigest of password
     hashofQueryPwd = hashlib.sha1(queryPwd.encode()).hexdigest()
+    if args.verbose:
+        print(f"Hash of password: {hashofQueryPwd.upper()}")
     # send request
-    replyLines = doQuery(hashofQueryPwd)
+    replyLines = doQuery(hashofQueryPwd, verbose=args.verbose)
     if len(replyLines) == 0:
         print("No response received for your password query")
     else:
-        if verbose > 0:
+        if args.verbose:
             print(f"response contains {len(replyLines)} lines")
+
         # find how many compromises are known
-        nCompromises = checkQuery(hashofQueryPwd, replyLines)
+        nCompromises = checkQuery(hashofQueryPwd, replyLines, verbose=args.verbose)
         print(f"### your password has {nCompromises} compromises")
 
     return rc
