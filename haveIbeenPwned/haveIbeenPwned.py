@@ -58,6 +58,8 @@ def checkQuery(hashofQueryPwd, replyLines):
         # capture the number of compromises known
         if result is not None:
             nCompromises += int(line.split(":")[1])
+            # there will be only one match so from here we're done
+            break
 
     return nCompromises
 
