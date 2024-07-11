@@ -68,6 +68,10 @@ def main():
     rc = 0
     verbose = 0
 
+    if len(sys.argv) > 1:
+        if 'verbose' in sys.argv:
+            verbose = 1
+
     # read password from stdin, do not echo or store it
     queryPwd = getpass(prompt="Enter password to be checked: ")
     # get SHA1 hexdigest of password
@@ -86,4 +90,4 @@ def main():
     return rc
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())
