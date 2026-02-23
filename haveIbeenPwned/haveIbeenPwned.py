@@ -70,9 +70,8 @@ def checkQuery(hashofQueryPwd, replyLines, verbose=False):
 
 def getPasswdHash():
     # read password from stdin, do not echo or store it
-    queryPwd = getpass(prompt="Enter password to be checked: ")
     # get SHA1 hexdigest of password
-    return hashlib.sha1(queryPwd.encode()).hexdigest()
+    return hashlib.sha1(getpass(prompt="Enter password to be checked: ").encode()).hexdigest()
 
 def main():
     # init things
