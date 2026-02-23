@@ -78,7 +78,14 @@ def main():
     rc = 0
 
     parser = argparse.ArgumentParser(
-            description="read a password from STDIN with no echo and check if it has known compromises")
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            description="""\
+WARNING: DO NOT TYPE YOUR PASSWORD WHEN INVOKING PROGRAM!
+         Invoke the program with no arguments or one of the 
+         below options and type the password at the prompt
+
+This program will read a password from STDIN with no echo 
+and check if it has known compromises""")
     parser.add_argument(
             '--verbose',
             action='store_true',
