@@ -68,6 +68,12 @@ def checkQuery(hashofQueryPwd, replyLines, verbose=False):
 
     return nCompromises
 
+def getPasswdHash():
+    # read password from stdin, do not echo or store it
+    queryPwd = getpass(prompt="Enter password to be checked: ")
+    # get SHA1 hexdigest of password
+    return hashlib.sha1(queryPwd.encode()).hexdigest()
+
 def main():
     # init things
     rc = 0
@@ -85,10 +91,8 @@ def main():
         if 'verbose' in sys.argv:
             verbose = 1
 
-    # read password from stdin, do not echo or store it
-    queryPwd = getpass(prompt="Enter password to be checked: ")
     # get SHA1 hexdigest of password
-    hashofQueryPwd = hashlib.sha1(queryPwd.encode()).hexdigest()
+    hashofQueryPwd = getPasswdHash()
     if args.verbose:
         print(f"Hash of password: {hashofQueryPwd.upper()}")
     # send request
